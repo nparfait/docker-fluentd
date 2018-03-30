@@ -1,1 +1,3 @@
-# Docker image for Fluentd by Banzai Cloud https://hub.docker.com/r/banzaicloud/fluentd
+# Fluentd Docker image
+
+This is a Docker image for Fluentd we use and deploy to our Kubernetes clusters. 
