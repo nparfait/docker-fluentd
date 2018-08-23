@@ -23,7 +23,7 @@ RUN buildDeps="sudo make gcc g++ libc-dev ruby-dev" \
 
 ADD fluent.conf /fluentd/etc/fluent.conf 
 
-VOLUME /fluentd/etc/conf.d/
-VOLUME /fluentd/etc/ssl/
+#VOLUME /fluentd/etc/conf.d/
+#VOLUME /fluentd/etc/ssl/
 
 EXPOSE 24284
