@@ -1,11 +1,14 @@
-FROM fluent/fluentd:v1.1-debian-onbuild
+FROM fluent/fluentd:v1.1.2-debian
 MAINTAINER Baznai Cloud <info@banzaicloud.com>
 
-RUN buildDeps="sudo make gcc g++ libc-dev ruby-dev" \
- && apt-get update \
- && apt-get install -y --no-install-recommends $buildDeps \
- && sudo gem install \
-        fluent-plugin-elasticsearch \
+RUN mkdir -p /fluentd/etc /fluentd/plugins
+ONBUILD COPY plugins /fluentd/plugins/
+
+RUN buildDeps="make gcc g++ libc-dev ruby-dev zlib1g-dev libz-dev git" \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends $buildDeps \
+  && gem install \
+        specific_install \
         fluent-plugin-remote-syslog \
         fluent-plugin-kubernetes_metadata_filter \
         fluent-plugin-webhdfs \
@@ -13,17 +16,18 @@ RUN buildDeps="sudo make gcc g++ libc-dev ruby-dev" \
         fluent-plugin-prometheus \
         fluent-plugin-s3 \
         fluent-plugin-rewrite-tag-filter \
- && sudo gem sources --clear-all \
- && SUDO_FORCE_REMOVE=yes \
-    apt-get purge -y --auto-remove \
+        fluent-plugin-azurestorage
+RUN gem specific_install -l https://github.com/banzaicloud/fluent-plugin-gcs.git
+RUN gem sources --clear-all \
+  && apt-get purge -y --auto-remove \
                   -o APT::AutoRemove::RecommendsImportant=false \
                   $buildDeps \
- && rm -rf /var/lib/apt/lists/* \
-           /home/fluent/.gem/ruby/2.3.0/cache/*.gem
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* \
+         /home/fluent/.gem/ruby/2.3.0/cache/*.gem \
+         /var/lib/gems/2.3.0/cache/*.gem \
+  && apt-get purge -y $buildDeps
 
 ADD fluent.conf /fluentd/etc/fluent.conf 
-
-#VOLUME /fluentd/etc/conf.d/
-#VOLUME /fluentd/etc/ssl/
 
 EXPOSE 24284
