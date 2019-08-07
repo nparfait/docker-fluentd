@@ -19,19 +19,11 @@ RUN buildDeps="make gcc g++ libc-dev ruby-dev zlib1g-dev libz-dev git" \
         fluent-plugin-s3 \
         fluent-plugin-rewrite-tag-filter \
         fluent-plugin-azurestorage \
-        fluent-plugin-oss 
+        fluent-plugin-oss \
+        fluent-plugin-grafana-loki
 
 
 RUN gem specific_install -l https://github.com/banzaicloud/fluent-plugin-gcs.git
-
-RUN rm -rf /tmp/loki \
-    && git clone --depth 1 https://github.com/grafana/loki.git /tmp/loki \
-    && cd /tmp/loki/fluentd/fluent-plugin-loki \
-    && sed -i "s|^  spec.files.*|  spec.files = Dir.glob('{bin,lib}/**/*')|" fluent-plugin-loki.gemspec \
-    && gem build fluent-plugin-loki.gemspec \
-    && gem install fluent-plugin-loki-*.gem \
-    && cd /tmp \
-    && rm -rf /tmp/loki
     
 RUN gem sources --clear-all \
   && apt-get purge -y --auto-remove \
