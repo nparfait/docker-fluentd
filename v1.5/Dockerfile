@@ -20,11 +20,12 @@ RUN buildDeps="make gcc g++ libc-dev ruby-dev zlib1g-dev libz-dev git" \
         fluent-plugin-rewrite-tag-filter \
         fluent-plugin-azurestorage \
         fluent-plugin-oss \
-        fluent-plugin-grafana-loki
+        fluent-plugin-grafana-loki \
+        fluent-plugin-ec2-metadata
 
 
 RUN gem specific_install -l https://github.com/banzaicloud/fluent-plugin-gcs.git
-    
+
 RUN gem sources --clear-all \
   && apt-get purge -y --auto-remove \
                   -o APT::AutoRemove::RecommendsImportant=false \
